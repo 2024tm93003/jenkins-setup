@@ -32,12 +32,6 @@ pipeline {
             }
         }
 
-        stage('Get Current Working Directory') {
-            steps {
-                echo "Current working directory: ${pwd()}"
-            }
-        }
-
         stage('Build Angular App') {
             steps {
                 dir('angular-app') {
