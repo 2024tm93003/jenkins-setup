@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  jenkins-master:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-master
+    ports:
+      - "8080:8080"
+      - "50000:50000"  # for JNLP agents
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - jenkins-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  jenkins-agent:
+    build: ./agent
+    container_name: jenkins-agent
+    environment: #the below secret needs to be copied after creating a slave
+      - JENKINS_SECRET=0b88a236048bb5b9a5f19e5cb9352ea922a91eabc014fe0c5260edfc1dd945c6
+      - JENKINS_AGENT_NAME=agent-1
+      - JENKINS_URL=http://jenkins-master:8080
+    depends_on:
+      - jenkins-master
+    ports:
+      - "1000:1000"
+      - "2000:2000"
+      - "3000:3000"
+    networks:
+      - jenkins-net
+
+volumes:
+  jenkins_home:
+
+networks:
+  jenkins-net:
